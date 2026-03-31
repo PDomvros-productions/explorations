@@ -1,0 +1,852 @@
+<!DOCTYPE html>
+<html lang="el">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Οι Ανακαλύψεις</title>
+  <style>
+    :root {
+      --bg: #f7f0e4;
+      --panel: #fffaf2;
+      --ink: #3c2a1b;
+      --accent: #8b2e1f;
+      --accent-2: #c08b3a;
+      --line: #dcc8ab;
+      --soft: #f1e3cf;
+      --shadow: 0 12px 30px rgba(60, 42, 27, 0.12);
+      --radius: 20px;
+    }
+
+    * { box-sizing: border-box; }
+    html { scroll-behavior: smooth; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Roboto, Arial, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at top left, rgba(255,255,255,0.72), transparent 32%),
+        linear-gradient(180deg, #fbf6ee 0%, var(--bg) 100%);
+      line-height: 1.65;
+    }
+
+    .page {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 24px 20px 48px;
+    }
+
+    .hero {
+      position: relative;
+      padding: 24px 24px 18px;
+      background: linear-gradient(135deg, rgba(255,250,242,0.95), rgba(245,231,207,0.92));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset: auto -80px -80px auto;
+      width: 240px;
+      height: 240px;
+      background: radial-gradient(circle, rgba(192,139,58,0.16), transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .hero h1 {
+      margin: 0;
+      font-size: clamp(2rem, 4vw, 3.2rem);
+      color: var(--accent);
+      letter-spacing: 0.5px;
+    }
+
+    .logo {
+      width: clamp(88px, 11vw, 132px);
+      height: auto;
+      flex-shrink: 0;
+      display: block;
+      background: transparent;
+      padding: 0;
+      border: none;
+      border-radius: 0;
+      box-shadow: none;
+    }
+
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin: 18px 0 22px;
+    }
+
+    .tab-button {
+      border: 1px solid var(--line);
+      background: rgba(255,255,255,0.78);
+      color: var(--ink);
+      padding: 12px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 0.98rem;
+      font-weight: 700;
+      transition: 0.25s ease;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.04);
+    }
+
+    .tab-button:hover,
+    .tab-button:focus-visible {
+      transform: translateY(-1px);
+      border-color: var(--accent-2);
+      outline: none;
+    }
+
+    .tab-button.active {
+      background: linear-gradient(135deg, var(--accent), #a5452f);
+      color: white;
+      border-color: transparent;
+    }
+
+    .tab-panel {
+      display: none;
+      animation: fadeIn 0.35s ease;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sheet-intro {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      margin-bottom: 18px;
+    }
+
+    .sheet-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--soft);
+      color: var(--accent);
+      border: 1px solid var(--line);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .sheet-intro h2 {
+      margin: 0 0 8px;
+      font-size: clamp(1.3rem, 2.2vw, 2rem);
+      color: var(--accent);
+    }
+
+    .sheet-intro .theme {
+      margin: 0;
+      font-size: 1rem;
+    }
+
+    .source-grid {
+      display: grid;
+      grid-template-columns: minmax(0, 1.12fr) minmax(320px, 0.88fr);
+      gap: 18px;
+      align-items: stretch;
+      margin-bottom: 18px;
+    }
+
+    .source-card, .image-card, .qa-card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+    }
+
+    .source-card {
+      padding: 22px 24px;
+    }
+
+    .source-block + .source-block {
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px dashed var(--line);
+    }
+
+    .source-label {
+      display: inline-block;
+      margin-bottom: 8px;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: var(--soft);
+      color: var(--accent);
+      font-size: 0.86rem;
+      font-weight: 700;
+      border: 1px solid var(--line);
+    }
+
+    .source-card h3, .qa-header h3 {
+      margin: 0 0 10px;
+      color: var(--accent);
+      font-size: 1.22rem;
+    }
+
+    blockquote {
+      margin: 0;
+      padding: 18px 20px;
+      background: #fff;
+      border-left: 5px solid var(--accent-2);
+      border-radius: 14px;
+      font-size: 0.99rem;
+    }
+
+    blockquote p {
+      margin: 0 0 12px;
+    }
+
+    blockquote p:last-child {
+      margin-bottom: 0;
+    }
+
+    .source-ref {
+      margin: 14px 0 0;
+      font-size: 0.95rem;
+      font-style: italic;
+      color: #6d5140;
+    }
+
+    .image-card {
+      padding: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 340px;
+      background: linear-gradient(180deg, #fffaf2 0%, #f0e2cb 100%);
+    }
+
+    .image-card img {
+      width: 100%;
+      max-height: 760px;
+      object-fit: cover;
+      border-radius: 16px;
+      border: 1px solid rgba(60,42,27,0.09);
+    }
+
+    .image-card.top-align {
+      align-items: flex-start;
+    }
+
+    .qa-card {
+      padding: 22px 24px;
+      margin-bottom: 26px;
+    }
+
+    .qa-header {
+      margin-bottom: 12px;
+    }
+
+    .qa-header p {
+      margin: 0;
+      color: #6d5140;
+    }
+
+    .qa-item {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      margin-bottom: 12px;
+      overflow: hidden;
+    }
+
+    .qa-item summary {
+      list-style: none;
+      cursor: pointer;
+      padding: 16px 18px;
+      font-weight: 700;
+      position: relative;
+      padding-right: 52px;
+      user-select: none;
+    }
+
+    .qa-item summary::-webkit-details-marker {
+      display: none;
+    }
+
+    .qa-item summary::after {
+      content: "+";
+      position: absolute;
+      right: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: var(--soft);
+      color: var(--accent);
+      font-size: 1.2rem;
+      font-weight: 800;
+    }
+
+    .qa-item[open] summary::after {
+      content: "−";
+    }
+
+    .qa-item .answer {
+      padding: 0 18px 18px;
+      color: #4e3a2a;
+    }
+
+    .qa-item .answer p {
+      margin: 0;
+    }
+
+    footer {
+      margin-top: 18px;
+      padding: 18px 14px 8px;
+      text-align: center;
+      color: #65493b;
+      font-size: 0.96rem;
+    }
+
+    @media (max-width: 980px) {
+      .source-grid {
+        grid-template-columns: 1fr;
+      }
+      .hero-top {
+        align-items: center;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .page {
+        padding: 14px 12px 32px;
+      }
+      .hero {
+        padding: 18px 16px 16px;
+      }
+      .hero-top {
+        align-items: flex-start;
+      }
+      .logo {
+        width: 90px;
+      }
+      .source-card, .qa-card {
+        padding: 18px 16px;
+      }
+      .tab-button {
+        padding: 10px 14px;
+        font-size: 0.92rem;
+      }
+    }
+
+    @media print {
+      body {
+        background: white;
+      }
+      .page {
+        max-width: none;
+        padding: 0;
+      }
+      .tabs {
+        display: none;
+      }
+      .tab-panel {
+        display: block !important;
+        page-break-after: always;
+        margin-bottom: 90px;
+      }
+      .hero {
+        box-shadow: none;
+        border-radius: 0;
+        border: none;
+        margin-bottom: 16px;
+      }
+      .source-card, .image-card, .qa-card, .sheet-intro {
+        box-shadow: none;
+      }
+      footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        border-top: 1px solid #ccc;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="page">
+    <header class="hero">
+      <div class="hero-top">
+        <h1>Οι Ανακαλύψεις</h1>
+        <img class="logo" src="logo.png" alt="Logo">
+      </div>
+    </header>
+
+    <nav class="tabs" role="tablist" aria-label="Φύλλα εργασίας">
+      <button class="tab-button active" id="btn-1" role="tab" aria-controls="tab-1" aria-selected="true" data-tab="tab-1">Ομάδα 1</button>
+<button class="tab-button " id="btn-2" role="tab" aria-controls="tab-2" aria-selected="false" data-tab="tab-2">Ομάδα 2</button>
+<button class="tab-button " id="btn-3" role="tab" aria-controls="tab-3" aria-selected="false" data-tab="tab-3">Ομάδα 3</button>
+<button class="tab-button " id="btn-4" role="tab" aria-controls="tab-4" aria-selected="false" data-tab="tab-4">Ομάδα 4</button>
+<button class="tab-button " id="btn-5" role="tab" aria-controls="tab-5" aria-selected="false" data-tab="tab-5">Ομάδα 5</button>
+<button class="tab-button " id="btn-6" role="tab" aria-controls="tab-6" aria-selected="false" data-tab="tab-6">Ομάδα 6</button>
+    </nav>
+
+    
+    <section class="tab-panel active" id="tab-1" role="tabpanel" aria-labelledby="btn-1">
+      <div class="sheet-intro">
+        <div class="sheet-badge">Φύλλο εργασίας 1</div>
+        <h2>ΟΜΑΔΑ 1 — Ο Μάρκο Πόλο και η εικόνα της Ανατολής</h2>
+        <p class="theme">Θέμα: Πώς οι αφηγήσεις για τα πλούτη της Ανατολής ενίσχυσαν το ενδιαφέρον των Ευρωπαίων για τα εξερευνητικά ταξίδια;</p>
+      </div>
+
+      <div class="source-grid">
+        <div class="source-card">
+          
+    <section class="source-block">
+      <div class="source-label">Πηγή</div>
+      <h3>Τα αμύθητα πλούτη της Ιαπωνίας</h3>
+      <blockquote>
+        <p>«Οι άνθρωποι εδώ έχουν καλούς τρόπους και σας λέω ότι έχουν χρυσάφι σε υπερβολικές ποσότητες. Και σας λέω, επίσης, ότι κανένας άντρας δε μπορεί να μεταφέρει χρυσάφι έξω από αυτό το νησί, γιατί ούτε έμπορος ούτε κανένας άλλος δεν πλησιάζει στη στεριά. Έχουν τόσο χρυσάφι, ώστε αυτό το θαυμάσιο αγαθό δεν ξέρουν τι να το κάνουν. Σας λέω αληθινά ότι υπάρχει ένα μεγαλοπρεπές παλάτι ολόκληρο καλυμμένο με πλάκες καθαρού χρυσό... Έχουν σε μεγάλη αφθονία πολύτιμες κόκκινες πέτρες, πολύ ωραίες, στρογγυλές και μεγάλες και εξίσου ακριβές όσο και οι λευκές. Είναι ένα νησί τόσο πλούσιο, ώστε κανένας δεν μπορεί να μετρήσει τον πλούτο που υπάρχει σ&#x27; αυτό.»</p>
+      </blockquote>
+      <div class="source-ref">Μάρκο Πόλο, Το βιβλίο των θαυμάτων, κεφ. 162.</div>
+    </section>
+    
+        </div>
+        <aside class="image-card">
+          <img src="1.png" alt="ΟΜΑΔΑ 1 — Ο Μάρκο Πόλο και η εικόνα της Ανατολής">
+        </aside>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header">
+          <h3>Ερωτήσεις</h3>
+
+        </div>
+        
+    <details class="qa-item">
+      <summary>Ποια αγαθά παρουσιάζονται ως πολύτιμα στην πηγή;</summary>
+      <div class="answer"><p>Ως πολύτιμα αγαθά παρουσιάζονται το χρυσάφι σε τεράστιες ποσότητες και οι πολύτιμες πέτρες, ιδιαίτερα οι κόκκινες και οι λευκές. Ακόμη και το παλάτι περιγράφεται ως καλυμμένο με πλάκες χρυσού, ώστε να φανεί το μέγεθος του πλούτου.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Ποια εικόνα σχηματίζει ο αναγνώστης για την Ιαπωνία;</summary>
+      <div class="answer"><p>Ο αναγνώστης σχηματίζει την εικόνα μιας μακρινής, θαυμαστής και σχεδόν μυθικής χώρας, γεμάτης πλούτη, ομορφιά και αφθονία. Η Ιαπωνία παρουσιάζεται σαν τόπος εξαιρετικά επιθυμητός και εντυπωσιακός.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Γιατί τέτοιες περιγραφές μπορούσαν να παρακινήσουν τους Ευρωπαίους να αναζητήσουν θαλάσσιους δρόμους προς την Ανατολή;</summary>
+      <div class="answer"><p>Τέτοιες περιγραφές γεννούσαν την ελπίδα για τεράστια κέρδη από το εμπόριο και την απόκτηση πολύτιμων αγαθών. Οι Ευρωπαίοι πίστευαν ότι αν έβρισκαν θαλάσσιο δρόμο προς την Ανατολή, θα αποκτούσαν άμεση πρόσβαση σε αυτά τα πλούτη.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Να δώσετε έναν δικό σας τίτλο στην πηγή.</summary>
+      <div class="answer"><p>Ένας κατάλληλος τίτλος θα μπορούσε να είναι: «Η μυθική χώρα του αμέτρητου χρυσού».</p></div>
+    </details>
+    
+      </div>
+    </section>
+    
+    <section class="tab-panel " id="tab-2" role="tabpanel" aria-labelledby="btn-2">
+      <div class="sheet-intro">
+        <div class="sheet-badge">Φύλλο εργασίας 2</div>
+        <h2>ΟΜΑΔΑ 2 — Ο Μάρκο Πόλο και η επίδρασή του στον Κολόμβο</h2>
+        <p class="theme">Θέμα: Πώς οι αφηγήσεις του Μάρκο Πόλο επηρέασαν τη σκέψη και τις προσδοκίες του Χριστόφορου Κολόμβου;</p>
+      </div>
+
+      <div class="source-grid">
+        <div class="source-card">
+          
+    <section class="source-block">
+      <div class="source-label">Πηγή Α</div>
+      <h3>Τα πλούτη της Ιαπωνίας</h3>
+      <blockquote>
+        <p>«Στα νησί αυτό καθώς και στα άλλα γύρω δεν υπάρχει φυτό που να μην ευωδιάζει και να μη χρησιμεύει σε κάτι, όπως η αλόη για να αρκεστούμε σ&#x27; αυτήν. Υπάρχουν επίσης πολλά ακριβά καρυκεύματα διαφόρων ειδών... Το χρυσάφι βρίσκεται σε μεγάλες ποσότητες, το ίδιο και οι πολύτιμοι λίθοι. Πραγματικά είναι αξιοθαύμαστο πόσο φθηνά είναι το χρυσάφι και τα άλλα πανάκριβα προϊόντα στα νησιά αυτά. Μόνο που το ταξίδι είναι πάρα πολύ μακρινό και επικίνδυνο.»</p>
+      </blockquote>
+      <div class="source-ref">Από Το Βιβλίο των Θαυμάτων του Μάρκο Πόλο, κεφ.162, 167, στο Marco Polo, Le devisement du monde, Le livre des marveilles, t.II, La Decouverte/Maspero, Παρίσι, 1983, 412.</div>
+    </section>
+    
+
+    <section class="source-block">
+      <div class="source-label">Πηγή Β</div>
+      <h3>Ο Χριστόφορος Κολόμβος πλέει προς την Κούβα</h3>
+      <blockquote>
+        <p>«Παρασκευή 26 Οκτωβρίου (1492). Από εδώ που έχουμε αγκυροβολήσει θα βάλω πλώρη για την Κούβα. Αν κρίνω από τις πληροφορίες των Ινδιάνων ότι το νησί αυτό έχει μεγάλη έκταση και είναι προικισμένο με αφθονία χρυσού και πολύτιμων λίθων, πρόκειται σίγουρα για την Ιαπωνία.»</p>
+      </blockquote>
+      <div class="source-ref">Βιβλιογραφική αναφορά: Από το Ημερολόγιο Καταστρώματος του Χριστόφορου Κολόμβου, 1492, στο Valentino Pompiani, Giornale di Bordo di Cristoforo Colombo (1492-93), Μιλάνο 1939, 116, 120.</div>
+    </section>
+    
+        </div>
+        <aside class="image-card">
+          <img src="2.png" alt="ΟΜΑΔΑ 2 — Ο Μάρκο Πόλο και η επίδρασή του στον Κολόμβο">
+        </aside>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header">
+          <h3>Ερωτήσεις </h3>
+       
+        </div>
+        
+    <details class="qa-item">
+      <summary>Ποια κοινά στοιχεία βλέπετε στις δύο πηγές;</summary>
+      <div class="answer"><p>Και οι δύο πηγές συνδέουν την Ιαπωνία με μεγάλο πλούτο, χρυσάφι και πολύτιμους λίθους. Παρουσιάζουν επίσης την Ανατολή ως τόπο εξαιρετικά ελκυστικό και γεμάτο πολύτιμα αγαθά.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Γιατί ο Κολόμβος πιστεύει ότι βρίσκεται στην Ιαπωνία;</summary>
+      <div class="answer"><p>Ο Κολόμβος πιστεύει ότι βρίσκεται στην Ιαπωνία, επειδή οι πληροφορίες που ακούει για ένα μεγάλο νησί με άφθονο χρυσό και πολύτιμους λίθους ταιριάζουν με όσα είχε διαβάσει στις αφηγήσεις του Μάρκο Πόλο.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Ποιες λέξεις ή ιδέες δείχνουν την επίδραση του Μάρκο Πόλο στον Κολόμβο;</summary>
+      <div class="answer"><p>Η επίδραση φαίνεται στις ιδέες της «αφθονίας χρυσού», των «πολύτιμων λίθων» και της ταύτισης ενός πλούσιου νησιού με την Ιαπωνία. Ο Κολόμβος ερμηνεύει τη νέα πραγματικότητα με βάση όσα ήδη πίστευε από τον Μάρκο Πόλο.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Πώς συνδέεται η αναζήτηση χρυσού και πολύτιμων λίθων με τα κίνητρα των ανακαλύψεων;</summary>
+      <div class="answer"><p>Η αναζήτηση χρυσού και πολύτιμων λίθων συνδέεται με το οικονομικό κίνητρο των ανακαλύψεων. Οι ευρωπαϊκές δυνάμεις ήθελαν πλούτο, εμπορικό κέρδος και ισχυρότερη θέση στον διεθνή ανταγωνισμό.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Να γράψετε ένα συμπέρασμα 2-3 γραμμών: «Ο Μάρκο Πόλο επηρέασε τον Κολόμβο, επειδή...»</summary>
+      <div class="answer"><p>Ο Μάρκο Πόλο επηρέασε τον Κολόμβο, επειδή οι περιγραφές του για τα πλούτη της Ανατολής διαμόρφωσαν τις προσδοκίες του. Έτσι, ο Κολόμβος πίστεψε ότι οι τόποι που ανακάλυπτε ανήκαν στην Ασία και ιδιαίτερα στην Ιαπωνία.</p></div>
+    </details>
+    
+      </div>
+    </section>
+    
+    <section class="tab-panel " id="tab-3" role="tabpanel" aria-labelledby="btn-3">
+      <div class="sheet-intro">
+        <div class="sheet-badge">Φύλλο εργασίας 3</div>
+        <h2>ΟΜΑΔΑ 3 — Τα κίνητρα των Πορτογάλων εξερευνητών</h2>
+        <p class="theme">Θέμα: Ποια ήταν τα κίνητρα των ανακαλύψεων;</p>
+      </div>
+
+      <div class="source-grid">
+        <div class="source-card">
+          
+    <section class="source-block">
+      <div class="source-label">Πηγή</div>
+      <h3>Οι στόχοι του Ερρίκου του Θαλασσοπόρου</h3>
+      <blockquote>
+        <p>«Ήθελε να μάθει ποιες χώρες υπήρχαν πέρα από τα Κανάρια νησιά και από το ακρωτήριο Μπαγιατόρ, γιατί μέχρι εκείνη την εποχή κανένας άνθρωπος ούτε διάβασε ούτε άκουσε ποια χώρα βρισκόταν μετά από αυτό το ακρωτήριο ...</p>
+<p>Ο δεύτερος λόγος ήταν ότι αν σ&#x27; αυτές τις χώρες βρίσκονταν χριστιανικοί πληθυσμοί ή κάποια λιμάνια που μπορούσαν να τα πλησιάσουν χωρίς κίνδυνο, θα είχαν τη δυνατότητα να φέρουν στο βασίλειο πολλά και φθηνά προϊόντα, γιατί ασφαλώς δε θα υπήρχαν άλλοι άνθρωποι σ&#x27; αυτές τις ακτές που θα ασχολούνταν με το εμπόριο ...</p>
+<p>Ο τρίτος λόγος ήταν ότι θα έστελλε τους άνδρες του με σκοπό να πληροφορηθεί μέχρι πού έφθανε η δύναμη των απίστων.</p>
+<p>Ο τέταρτος λόγος υπήρξε ο εξής: θα ήθελε να μάθει αν σ&#x27; εκείνες τις περιοχές υπήρχαν μερικοί ηγεμόνες χριστιανοί αρκετά ισχυροί για να τον βοηθήσουν εναντίον των απίστων.</p>
+<p>Ο πέμπτος λόγος ήταν η μεγάλη του επιθυμία να συντελέσει στην ενίσχυση της χριστιανικής πίστης και να οδηγήσει στο χριστιανισμό όλες τις ψυχές που ήθελαν να σωθούν.»</p>
+      </blockquote>
+      <div class="source-ref">Comes Eanes de Azurara, Χρονικά της Γουινέας, 1543.</div>
+    </section>
+    
+        </div>
+        <aside class="image-card">
+          <img src="4.png" alt="ΟΜΑΔΑ 3 — Τα κίνητρα των Πορτογάλων εξερευνητών">
+        </aside>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header">
+          <h3>Ερωτήσεις </h3>
+       
+        </div>
+        
+    <details class="qa-item">
+      <summary>Να εντοπίσετε τα διαφορετικά κίνητρα του Ερρίκου.</summary>
+      <div class="answer"><p>Τα κίνητρα του Ερρίκου ήταν πολλά: η εξερεύνηση άγνωστων περιοχών, η αναζήτηση νέων προϊόντων και εμπορικών δρόμων, η συλλογή πληροφοριών για τους «απίστους», η αναζήτηση χριστιανών συμμάχων και η διάδοση της χριστιανικής πίστης.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Να τα κατατάξετε σε κατηγορίες: οικονομικά, θρησκευτικά, πολιτικά/στρατιωτικά, γνωστικά/εξερευνητικά.</summary>
+      <div class="answer"><p>Οικονομικά: αναζήτηση φθηνών προϊόντων και νέου εμπορίου. Θρησκευτικά: ενίσχυση της χριστιανικής πίστης και εκχριστιανισμός. Πολιτικά/στρατιωτικά: πληροφορίες για τη δύναμη των απίστων και εύρεση συμμάχων. Γνωστικά/εξερευνητικά: ανακάλυψη άγνωστων χωρών πέρα από τα γνωστά όρια.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Ποιο κίνητρο θεωρείτε σημαντικότερο; Να αιτιολογήσετε την απάντησή σας.</summary>
+      <div class="answer"><p>Το σημαντικότερο φαίνεται να είναι το οικονομικό κίνητρο, γιατί η αναζήτηση νέων προϊόντων και δρόμων εμπορίου μπορούσε να φέρει άμεσο πλούτο και δύναμη στο βασίλειο. Αυτό εξηγεί και γιατί τα ταξίδια οργανώθηκαν συστηματικά.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Πώς συνδέεται η πηγή με το κείμενο του βιβλίου για τα κίνητρα των ανακαλύψεων;</summary>
+      <div class="answer"><p>Η πηγή επιβεβαιώνει ότι τα κίνητρα των ανακαλύψεων δεν ήταν ένα μόνο, αλλά συνδυασμός οικονομικών, θρησκευτικών, πολιτικών και εξερευνητικών στόχων. Άρα συμφωνεί με τη γενική εικόνα που παρουσιάζει το βιβλίο.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Να παρουσιάσετε τα συμπεράσματά σας με 4 λέξεις-κλειδιά.</summary>
+      <div class="answer"><p>Τέσσερις κατάλληλες λέξεις-κλειδιά είναι: εξερεύνηση, εμπόριο, πίστη, ισχύς.</p></div>
+    </details>
+    
+      </div>
+    </section>
+    
+    <section class="tab-panel " id="tab-4" role="tabpanel" aria-labelledby="btn-4">
+      <div class="sheet-intro">
+        <div class="sheet-badge">Φύλλο εργασίας 4</div>
+        <h2>ΟΜΑΔΑ 4 — Ο Κολόμβος, η κατάκτηση και ο εκχριστιανισμός</h2>
+        <p class="theme">Θέμα: Τι φανερώνει η πηγή για τη στάση των Ευρωπαίων απέναντι στους νέους λαούς;</p>
+      </div>
+
+      <div class="source-grid">
+        <div class="source-card">
+          
+    <section class="source-block">
+      <div class="source-label">Πηγή</div>
+      <h3>Το πρώτο ταξίδι του Χριστόφορου Κολόμβου</h3>
+      <blockquote>
+        <p>«Παρασκευή 12 Οκτωβρίου. Η γη φαίνεται στον ορίζοντα στις 2 η ώρα τα ξημερώματα. Το πρωί αποβιβάζομαι στο νησί (ένα νησί στις Μπαχάμες). Ξεδιπλώνω τη βασιλική σημαία και το καταλαμβάνω στο όνομα του βασιλιά και της βασίλισσας.</p>
+<p>Σάββατο 16 Δεκεμβρίου. Οι κάτοικοι της Ισπανιόλας (Αϊτής) δεν έχουν όπλα και είναι εντελώς γυμνοί. Οι Μεγαλειότητές σας (ο βασιλιάς και η βασίλισσα της Ισπανίας), θα έχουν τη μεγάλη χαρά να τους εκχριστιανίσουν.»</p>
+      </blockquote>
+      <div class="source-ref">Αποσπάσματα από το «Ημερολόγιο του Κολόμβου» (1492).</div>
+    </section>
+    
+        </div>
+        <aside class="image-card">
+          <img src="3.png" alt="ΟΜΑΔΑ 4 — Ο Κολόμβος, η κατάκτηση και ο εκχριστιανισμός">
+        </aside>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header">
+          <h3>Ερωτήσεις </h3>
+ 
+        </div>
+        
+    <details class="qa-item">
+      <summary>Τι σημαίνει η φράση «το καταλαμβάνω στο όνομα του βασιλιά και της βασίλισσας»;</summary>
+      <div class="answer"><p>Σημαίνει ότι ο Κολόμβος θεωρεί τη γη ιδιοκτησία του ισπανικού στέμματος. Δεν την παρουσιάζει ως τόπο ανεξάρτητων κατοίκων, αλλά ως περιοχή που μπορεί να περάσει στην εξουσία της Ισπανίας.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Πώς παρουσιάζονται οι κάτοικοι της Ισπανιόλας;</summary>
+      <div class="answer"><p>Οι κάτοικοι παρουσιάζονται ως άοπλοι, γυμνοί και αδύναμοι να αντισταθούν. Η περιγραφή τους δείχνει ότι οι Ισπανοί τούς θεωρούσαν εύκολους στην υποταγή.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Τι αποκαλύπτει η πηγή για τις προθέσεις των Ισπανών;</summary>
+      <div class="answer"><p>Η πηγή αποκαλύπτει ότι οι Ισπανοί δεν ενδιαφέρονταν μόνο να εξερευνήσουν, αλλά και να κυριαρχήσουν και να εκχριστιανίσουν τους κατοίκους. Άρα υπήρχε σαφής πρόθεση επέκτασης και επιβολής.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Ποια στοιχεία δείχνουν ότι δεν πρόκειται μόνο για εξερεύνηση αλλά και για αρχή κατάκτησης;</summary>
+      <div class="answer"><p>Η ύψωση της βασιλικής σημαίας, η δήλωση κατάληψης της γης στο όνομα των μοναρχών και η αναφορά στον εκχριστιανισμό δείχνουν ότι ξεκινά μια διαδικασία κατάκτησης. Η εξερεύνηση συνδυάζεται αμέσως με πολιτική και θρησκευτική επιβολή.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Να γράψετε ένα σύντομο συμπέρασμα 2 γραμμών.</summary>
+      <div class="answer"><p>Η πηγή δείχνει ότι οι ανακαλύψεις συνδέθηκαν από την αρχή με την κατάκτηση. Οι νέοι λαοί αντιμετωπίστηκαν ως πληθυσμοί που μπορούσαν να υποταχθούν και να αλλάξουν πίστη.</p></div>
+    </details>
+    
+      </div>
+    </section>
+    
+    <section class="tab-panel " id="tab-5" role="tabpanel" aria-labelledby="btn-5">
+      <div class="sheet-intro">
+        <div class="sheet-badge">Φύλλο εργασίας 5</div>
+        <h2>ΟΜΑΔΑ 5 — Η μοιρασιά του κόσμου</h2>
+        <p class="theme">Θέμα: Με ποιον τρόπο οι ευρωπαϊκές δυνάμεις αντιμετώπισαν τις νέες χώρες ως περιοχές κυριαρχίας;</p>
+      </div>
+
+      <div class="source-grid">
+        <div class="source-card">
+          
+    <section class="source-block">
+      <div class="source-label">Πηγή</div>
+      <h3>Και με τη βούλα του πάπα</h3>
+      <blockquote>
+        <p>«Το 1493 ο πάπας Αλέξανδρος VI με βούλα του πρότεινε τη διανομή του κόσμου μεταξύ Πορτογάλων και Ισπανών. Στους τελευταίους θα παραχωρούνταν τα δικαιώματα σε όλες τις ανακαλύψεις που βρίσκονταν 600 περίπου χιλιόμετρα δυτικά των νησιών του Πράσινου Ακρωτηρίου.</p>
+<p>Οι Πορτογάλοι διαφώνησαν και ύστερα από σκληρές διαπραγματεύσεις υπογράφηκε το 1494 η Συνθήκη της Τορντεζίλας που μετέθετε τα όρια κυριαρχίας τους 1500 χιλιόμετρα δυτικότερα της αρχικής γραμμής, 47° δυτικά του μεσημβρινού. Έτσι ο κόσμος μοιράστηκε προτού καν ανακαλυφθεί.»</p>
+      </blockquote>
+      <div class="source-ref">Συνθήκη της Τορντεζίλας (1494).</div>
+    </section>
+    
+        </div>
+        <aside class="image-card">
+          <img src="5.png" alt="ΟΜΑΔΑ 5 — Η μοιρασιά του κόσμου">
+        </aside>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header">
+          <h3>Ερωτήσεις</h3>
+        
+        </div>
+        
+    <details class="qa-item">
+      <summary>Τι πρότεινε ο πάπας Αλέξανδρος ΣΤ΄;</summary>
+      <div class="answer"><p>Ο πάπας πρότεινε να μοιραστούν οι περιοχές των νέων ανακαλύψεων ανάμεσα στην Ισπανία και την Πορτογαλία με βάση μια διαχωριστική γραμμή. Δηλαδή επιχείρησε να καθορίσει ποια δύναμη θα είχε δικαιώματα σε κάθε περιοχή.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Γιατί αντέδρασαν οι Πορτογάλοι;</summary>
+      <div class="answer"><p>Οι Πορτογάλοι αντέδρασαν επειδή η αρχική γραμμή δεν εξυπηρετούσε αρκετά τα συμφέροντά τους. Ήθελαν μεγαλύτερο μερίδιο στις νέες περιοχές και ισχυρότερα δικαιώματα εξερεύνησης και κυριαρχίας.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Τι σημαίνει η φράση «ο κόσμος μοιράστηκε προτού καν ανακαλυφθεί»;</summary>
+      <div class="answer"><p>Σημαίνει ότι οι ευρωπαϊκές δυνάμεις αντιμετώπισαν άγνωστες ακόμη περιοχές σαν να ήταν ήδη δική τους ιδιοκτησία. Αποφάσιζαν για την κυριαρχία τους χωρίς να υπολογίζουν τους λαούς που ζούσαν εκεί.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Πώς συνδέεται η πηγή με τη δημιουργία αποικιακών αυτοκρατοριών;</summary>
+      <div class="answer"><p>Η πηγή δείχνει ότι η αποικιοκρατία οργανώθηκε και νομιμοποιήθηκε πολιτικά και διπλωματικά. Η μοιρασιά αυτή άνοιξε τον δρόμο για τη δημιουργία μεγάλων αποικιακών αυτοκρατοριών από τις ευρωπαϊκές δυνάμεις.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Να χαρακτηρίσετε με μία λέξη τη στάση των ευρωπαϊκών δυνάμεων απέναντι στον Νέο Κόσμο.</summary>
+      <div class="answer"><p>Κατακτητική.</p></div>
+    </details>
+    
+      </div>
+    </section>
+    
+    <section class="tab-panel " id="tab-6" role="tabpanel" aria-labelledby="btn-6">
+      <div class="sheet-intro">
+        <div class="sheet-badge">Φύλλο εργασίας 6</div>
+        <h2>ΟΜΑΔΑ 6 — Οι συνέπειες των ανακαλύψεων: βία, εκμετάλλευση, δουλεία, εμπόριο</h2>
+        <p class="theme">Θέμα: Ποιες ήταν οι συνέπειες των ανακαλύψεων για τους λαούς του Νέου Κόσμου και για την Ευρώπη;</p>
+      </div>
+
+      <div class="source-grid">
+        <div class="source-card">
+          
+    <section class="source-block">
+      <div class="source-label">Πηγή Α</div>
+      <h3>Μια φωνή διαμαρτυρίας για την τύχη των ιθαγενών</h3>
+      <blockquote>
+        <p>«Οι Ισπανοί βρέθηκαν ανάμεσα στους Ινδιάνους όπως οι λύκοι, οι τίγρεις και τα αιμοβόρα λιοντάρια πεινασμένα για πολλές μέρες. Εδώ και σαράντα χρόνια, δεν κάνουν τίποτα άλλο από να τους κάνουν κομμάτια, να τους τουφεκίζουν, να τους βασανίζουν και να τους εξοντώνουν με τόση ωμότητα, ώστε το νησί Κούβα είναι σήμερα ερημωμένο από κατοίκους...</p>
+<p>Αν οι χριστιανοί έχουν καταστρέψει τόσες και τόσες ψυχές, το έκαναν με μοναδικό σκοπό να αποκτήσουν χρυσάφι και να πλουτίσουν όσο το δυνατό γρηγορότερα.»</p>
+      </blockquote>
+      <div class="source-ref">Απόσπασμα από την αναφορά του Επισκόπου Βαρθολομαίου Λας Κάζας προς το βασιλιά της Ισπανίας.</div>
+    </section>
+    
+
+    <section class="source-block">
+      <div class="source-label">Πηγή Β</div>
+      <h3>Ο ειρηνικός χαρακτήρας των Ινδιάνων και η απάνθρωπη συμπεριφορά των κατακτητών</h3>
+      <blockquote>
+        <p>«Ενώ οι Ινδιάνοι είχαν φιλικά αισθήματα, οι Ευρωπαίοι εισέβαλαν στις περιοχές της Αμερικής σαν πεινασμένοι λύκοι. Οι λόγοι για τους οποίους σκοτώθηκαν τόσο πολλοί ιθαγενείς είναι οι εξής: Πρώτο, γιατί οι Ευρωπαίοι που έφτασαν εδώ, είχαν την πεποίθηση ότι, επειδή οι ντόπιοι δεν πίστευαν στη χριστιανική θρησκεία, νομιμοποιούνταν να τους σκοτώνουν ή να τους αιχμαλωτίζουν. Δεύτερο, οι ιθαγενείς αυτοί ήταν οι πιο ήσυχοι και οι πιο ειρηνικοί άνθρωποι του κόσμου, εντελώς άοπλοι. Τρίτο, πρέπει να σημειωθεί ότι η πλειονότητα αυτών που έχουν έρθει εδώ από την Ισπανία είναι ληστές, αποβράσματα της κοινωνίας, συρφετός κακοποιών.»</p>
+      </blockquote>
+      <div class="source-ref">Από τη Σύντομη Αναφορά για την καταστροφή των Δυτικών Ινδιών, 1552, του Επισκόπου Βαρθολομαίου Λας Κάζας (Las Casas), στο: H. Crieger, Die Neuzeit, Materiialien furden Geschichts unterwicht, Φραγκφούρτη, 41978, 28.</div>
+    </section>
+    
+
+    <section class="source-block">
+      <div class="source-label">Πηγή Γ</div>
+      <h3>Η Ευρώπη κέντρο του διεθνούς εμπορίου</h3>
+      <blockquote>
+        <p>«Η Ευρώπη εισάγει πολύτιμα μέταλλα, αποικιακά και άλλα προϊόντα από την Ασία και την Αμερική. Από την Αφρική μεταφέρονται δούλοι στην Αμερική για να εργαστούν ως σκλάβοι στις φυτείες (π.χ. καφέ, βαμβακιού) των Ευρωπαίων αποίκων.</p>
+<p>Οι ευρωπαϊκές εξαγωγές προς τις άλλες ηπείρους περιορίζονται, αρχικά, σε διάφορα μικροεμπορεύματα (βιοτεχνικά και άλλα).»</p>
+      </blockquote>
+      
+    </section>
+    
+        </div>
+        <aside class="image-card top-align">
+          <img src="6.png" alt="ΟΜΑΔΑ 6 — Οι συνέπειες των ανακαλύψεων: βία, εκμετάλλευση, δουλεία, εμπόριο">
+        </aside>
+      </div>
+
+      <div class="qa-card">
+        <div class="qa-header">
+          <h3>Ερωτήσεις </h3>
+  
+        </div>
+        
+    <details class="qa-item">
+      <summary>Πώς περιγράφει ο Λας Κάζας τη συμπεριφορά των Ισπανών;</summary>
+      <div class="answer"><p>Ο Λας Κάζας περιγράφει τη συμπεριφορά των Ισπανών ως εξαιρετικά βίαιη, απάνθρωπη και καταστροφική. Τους παρομοιάζει με άγρια θηρία που βασανίζουν, σκοτώνουν και εξοντώνουν τους ιθαγενείς.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Ποια κίνητρα αποδίδει στους κατακτητές;</summary>
+      <div class="answer"><p>Τους αποδίδει κυρίως την απληστία για χρυσό και γρήγορο πλουτισμό. Παράλληλα δείχνει ότι χρησιμοποιούσαν και τη θρησκεία ως δικαιολογία για τη βία και την υποδούλωση.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Τι φανερώνει η τρίτη πηγή για τη θέση της Ευρώπης στο νέο παγκόσμιο εμπόριο;</summary>
+      <div class="answer"><p>Η τρίτη πηγή φανερώνει ότι η Ευρώπη έγινε το κέντρο του νέου παγκόσμιου εμπορίου. Συγκέντρωνε πολύτιμα μέταλλα και προϊόντα από άλλες ηπείρους και επωφελούνταν από την εργασία των δούλων στις αποικίες.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Ποια σχέση βλέπετε ανάμεσα στην αποικιοκρατία, τη δουλεία και τον πλουτισμό της Ευρώπης;</summary>
+      <div class="answer"><p>Η αποικιοκρατία έδωσε στους Ευρωπαίους τον έλεγχο των νέων χωρών, η δουλεία εξασφάλισε φθηνά εργατικά χέρια και ο συνδυασμός αυτός οδήγησε στον πλουτισμό της Ευρώπης. Άρα η οικονομική άνοδος της Ευρώπης στηρίχθηκε σε μεγάλο βαθμό στην εκμετάλλευση ανθρώπων και τόπων.</p></div>
+    </details>
+    
+
+    <details class="qa-item">
+      <summary>Να καταγράψετε: δύο συνέπειες για την Ευρώπη — δύο συνέπειες για τους λαούς των νέων χωρών</summary>
+      <div class="answer"><strong>Για την Ευρώπη:</strong><br>• αύξηση του πλούτου και ανάπτυξη του εμπορίου<br>• ενίσχυση της οικονομικής και πολιτικής ισχύος της<br><br><strong>Για τους λαούς των νέων χωρών:</strong><br>• βία, θάνατοι και πληθυσμιακή καταστροφή<br>• δουλεία, εκμετάλλευση και απώλεια ελευθερίας</div>
+    </details>
+    
+      </div>
+    </section>
+    
+
+    <footer>
+      Παναγιώτης Δόμβρος, Εκπαιδευτικός Αγγλικής Γλώσσας &amp; Θεατρολόγος, Διευθυντής 1ου Γυμνασίου Πυλαίας
+    </footer>
+  </main>
+
+  <script>
+    const buttons = document.querySelectorAll('.tab-button');
+    const panels = document.querySelectorAll('.tab-panel');
+
+    buttons.forEach(button => {
+      button.addEventListener('click', () => {
+        const target = button.dataset.tab;
+        buttons.forEach(btn => {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-selected', 'false');
+        });
+        panels.forEach(panel => panel.classList.remove('active'));
+
+        button.classList.add('active');
+        button.setAttribute('aria-selected', 'true');
+        document.getElementById(target).classList.add('active');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      });
+    });
+  </script>
+</body>
+</html>
